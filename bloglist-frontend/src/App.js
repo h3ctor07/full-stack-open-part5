@@ -9,18 +9,32 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
+  //retrieve initial blogs from DB on start
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
   }, [])
 
+  //check if user is in session through localStorage
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    if (loggedUserJSON) {
+      setUser(JSON.parse(loggedUserJSON))
+    }
+  }, [])
+
+  //handle login form and save to localStorage
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
       const user = await loginService.login({
         username, password,
       })
+
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
       setUser(user);
       setUsername('')
       setPassword('')
@@ -30,6 +44,13 @@ const App = () => {
     
   }
 
+  //handle logout button
+  const handlelogout = () => {
+    window.localStorage.clear();
+    setUser(null);
+  }
+
+  //login form
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
@@ -58,7 +79,7 @@ const App = () => {
       loginForm() :
       <div>
       <h2>blogs</h2>
-      <p>{user.name} logged in</p>
+      <p>{user.name} logged in<button onClick={handlelogout}>logout</button></p>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
