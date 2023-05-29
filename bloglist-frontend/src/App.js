@@ -14,7 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState(null)
 
   //retrieve initial blogs from DB on start
   useEffect(() => {
@@ -51,6 +51,15 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       console.log(exception.message)
+
+      setNotification({
+        message: 'wrong username or password',
+        error: true,
+      })
+
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     }
     
   }
@@ -71,14 +80,17 @@ const App = () => {
     blogService.createBlog(newBlog)
       .then(blog => {
         setBlogs(blogs.concat(blog))
-        setNotification(`a new blog ${title} by ${author || user.name} added`)
+        setNotification({
+          message: `a new blog ${title} by ${author || user.name} added`,
+          error: false,
+        })
         setTitle('')
         setAuthor('')
         setUrl('')
       })
 
     setTimeout(() => {
-      setNotification('')
+      setNotification(null)
     }, 5000)
   }
 
@@ -91,6 +103,7 @@ const App = () => {
         setUsername={setUsername}
         password={password}
         setPassword={setPassword}
+        notification={notification}
       /> :
       <div>
       <h2>blogs</h2>
