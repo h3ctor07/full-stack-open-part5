@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Login from './components/Login'
 import AddBlog from './components/AddBlog'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState('')
 
   //retrieve initial blogs from DB on start
   useEffect(() => {
@@ -43,7 +45,8 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
-      setUser(user);
+      blogService.setToken(user.token)
+      setUser(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -68,10 +71,15 @@ const App = () => {
     blogService.createBlog(newBlog)
       .then(blog => {
         setBlogs(blogs.concat(blog))
+        setNotification(`a new blog ${title} by ${author || user.name} added`)
         setTitle('')
         setAuthor('')
         setUrl('')
       })
+
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
   }
 
   return (
@@ -86,6 +94,9 @@ const App = () => {
       /> :
       <div>
       <h2>blogs</h2>
+      {notification && <Notification 
+        notification={notification}
+      />}
       <p>{user.name} logged in<button onClick={handlelogout}>logout</button></p>
       <AddBlog 
         createBlog={createBlog}
