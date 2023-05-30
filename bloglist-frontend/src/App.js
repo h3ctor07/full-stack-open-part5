@@ -22,7 +22,6 @@ const App = () => {
   //retrieve initial blogs from DB on start
   useEffect(() => {
     blogService.getAll().then(blogs =>{
-      console.log(typeof blogs);
       setBlogs(blogs.sort((a,b) => b.likes - a.likes))
     })  
   }, [])
@@ -93,14 +92,21 @@ const App = () => {
     }, 5000)
   }
 
-  //delte a blog
+  //update likes
+  const updateLike = (id, object) => {
+      blogService.updateBlog(id, object).then(data => {
+        console.log('updated', data)
+        setBlogs(blogs.map(blog => blog.id === id? data : blog))
+      })
+  }
+
+  //delete a blog
   const deleteBlog = (id) => {
     blogService.deleteBlog(id).then(data => {
       setBlogs(blogs.filter(blog => blog.id !== id))
     })
   }
 
-  console.log(blogs);
   return (
     <>
     { user === null?
@@ -122,7 +128,7 @@ const App = () => {
         <AddBlog createBlog={createBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} user={user}/>
+        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} user={user} updateLike={updateLike}/>
       )}
     </div>
     }
