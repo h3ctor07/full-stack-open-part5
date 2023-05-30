@@ -78,9 +78,8 @@ const App = () => {
     addBlogRef.current.toggleVisibility()
     blogService.createBlog(object)
       .then(blog => {
-        //TEST
-        console.log('blog: ',blog);
-        console.log('user: ', user)
+        // console.log(blog);
+        // console.log(blogs);
         setBlogs(blogs.concat({...blog, user: [user]}))
         setNotification({
           message: `a new blog ${object.title} by ${object.author || user.name} added`,
@@ -93,8 +92,7 @@ const App = () => {
     }, 5000)
   }
 
-  // console.log('blogs: ', blogs);
-
+  console.log(blogs);
   return (
     <>
     { user === null?
