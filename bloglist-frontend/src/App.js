@@ -21,9 +21,10 @@ const App = () => {
 
   //retrieve initial blogs from DB on start
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    blogService.getAll().then(blogs =>{
+      console.log(typeof blogs);
+      setBlogs(blogs.sort((a,b) => b.likes - a.likes))
+    })  
   }, [])
 
   //check if user is in session through localStorage
@@ -92,6 +93,13 @@ const App = () => {
     }, 5000)
   }
 
+  //delte a blog
+  const deleteBlog = (id) => {
+    blogService.deleteBlog(id).then(data => {
+      setBlogs(blogs.filter(blog => blog.id !== id))
+    })
+  }
+
   console.log(blogs);
   return (
     <>
@@ -114,7 +122,7 @@ const App = () => {
         <AddBlog createBlog={createBlog}/>
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} user={user}/>
       )}
     </div>
     }
