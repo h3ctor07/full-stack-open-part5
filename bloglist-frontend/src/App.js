@@ -21,17 +21,17 @@ const App = () => {
 
   //retrieve initial blogs from DB on start
   useEffect(() => {
-    blogService.getAll().then(blogs =>{
+    blogService.getAll().then(blogs => {
       setBlogs(blogs.sort((a,b) => b.likes - a.likes))
-    })  
+    })
   }, [])
 
   //check if user is in session through localStorage
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      
+
       setUser(user)
       blogService.setToken(user.token)
     }
@@ -64,13 +64,13 @@ const App = () => {
         setNotification(null)
       }, 5000)
     }
-    
+
   }
 
   //handle logout button
   const handlelogout = () => {
-    window.localStorage.removeItem('loggedBlogappUser');
-    setUser(null);
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
   }
 
   // handle create blog button
@@ -80,7 +80,7 @@ const App = () => {
       .then(blog => {
         // console.log(blog);
         // console.log(blogs);
-        setBlogs(blogs.concat({...blog, user: [user]}))
+        setBlogs(blogs.concat({ ...blog, user: [user] }))
         setNotification({
           message: `a new blog ${object.title} by ${object.author || user.name} added`,
           error: false,
@@ -94,44 +94,44 @@ const App = () => {
 
   //update likes
   const updateLike = (id, object) => {
-      blogService.updateBlog(id, object).then(data => {
-        console.log('updated', data)
-        setBlogs(blogs.map(blog => blog.id === id? data : blog))
-      })
+    blogService.updateBlog(id, object).then(data => {
+      console.log('updated', data)
+      setBlogs(blogs.map(blog => blog.id === id? data : blog))
+    })
   }
 
   //delete a blog
   const deleteBlog = (id) => {
-    blogService.deleteBlog(id).then(data => {
+    blogService.deleteBlog(id).then(() => {
       setBlogs(blogs.filter(blog => blog.id !== id))
     })
   }
 
   return (
     <>
-    { user === null?
-      <Login
-        handleLogin={handleLogin}
-        username={username}
-        setUsername={setUsername}
-        password={password}
-        setPassword={setPassword}
-        notification={notification}
-      /> :
-      <div>
-      <h2>blogs</h2>
-      {notification && <Notification 
-        notification={notification}
-      />}
-      <p>{user.name} logged in<button onClick={handlelogout}>logout</button></p>
-      <Togglable buttonLabel="new note" ref={addBlogRef}>
-        <AddBlog createBlog={createBlog}/>
-      </Togglable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} user={user} updateLike={updateLike}/>
-      )}
-    </div>
-    }
+      { user === null?
+        <Login
+          handleLogin={handleLogin}
+          username={username}
+          setUsername={setUsername}
+          password={password}
+          setPassword={setPassword}
+          notification={notification}
+        /> :
+        <div>
+          <h2>blogs</h2>
+          {notification && <Notification
+            notification={notification}
+          />}
+          <p>{user.name} logged in<button onClick={handlelogout}>logout</button></p>
+          <Togglable buttonLabel="new note" ref={addBlogRef}>
+            <AddBlog createBlog={createBlog}/>
+          </Togglable>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} user={user} updateLike={updateLike}/>
+          )}
+        </div>
+      }
     </>
   )
 }
