@@ -9,11 +9,13 @@ const Blog = ({ blog, deleteBlog, user, updateLike }) => {
     marginBottom: 5
   }
 
-  const [visible, setVisible] = useState(true)
+  const [simpleView, setSimpleView] = useState(true)
 
-  const toggleVisibility = () => {
-    setVisible(!visible)
+  const toggleView = () => {
+    setSimpleView(!simpleView)
   }
+
+  const hideWhenSimpleView = { display: simpleView ? 'none': '' }
 
   const handleLike = () => {
     updateLike(blog.id, {
@@ -22,8 +24,6 @@ const Blog = ({ blog, deleteBlog, user, updateLike }) => {
       'url': blog.url,
       'likes': blog.likes + 1,
     })
-
-
   }
 
   const handleDelete = () => {
@@ -32,27 +32,15 @@ const Blog = ({ blog, deleteBlog, user, updateLike }) => {
     }
   }
 
-  const simpleView = () => (
-    <>
-      <p>{blog.title} {blog.author} <button onClick={toggleVisibility}>view</button></p>
-    </>
-  )
-
-  const detailedView = () => (
-    <>
-      <p>{blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button></p>
-      <p>{blog.url}</p>
-      <p>likes {blog.likes} <button onClick={handleLike}>like</button></p>
-      <p>{blog.user[0].username}</p>
-      {blog.user[0].username === user.username && <button onClick={handleDelete}>remove</button>}
-    </>
-  )
-
   return (
     <div style={blogStyle}>
-      {visible ?
-        simpleView() :
-        detailedView()}
+      <p>{blog.title} {blog.author} <button onClick={toggleView}>{simpleView? 'show': 'hide'}</button></p>
+      <div style={hideWhenSimpleView} className='extraDetails'>
+        <p>{blog.url}</p>
+        <p>likes {blog.likes} <button onClick={handleLike}>like</button></p>
+        <p>{blog.user[0].username}</p>
+        {blog.user[0].username === user.username && <button onClick={handleDelete}>remove</button>}
+      </div>
     </div>
   )
 }
