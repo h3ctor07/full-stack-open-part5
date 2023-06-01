@@ -6,6 +6,7 @@ import Blog from './Blog'
 
 describe('<Blog />', () => {
   let container
+  let updateLike
   beforeEach(() => {
     const blog = {
       'title': 'testTitle',
@@ -26,7 +27,10 @@ describe('<Blog />', () => {
       name: 'tester',
       username: 'testerUser',
     }
-    container = render(<Blog blog={blog} user={user} />).container
+
+    updateLike = jest.fn()
+
+    container = render(<Blog blog={blog} user={user} updateLike={updateLike} />).container
   })
 
   test('blog only shows title and author by default', async () => {
@@ -38,13 +42,21 @@ describe('<Blog />', () => {
   test('URL and likes are shown if "show" button is clicked', async () => {
     const user = userEvent.setup()
     const button = screen.getByText('show')
-    screen.debug(button)
 
     await user.click(button)
     const div = container.querySelector('.extraDetails')
 
     expect(div).not.toHaveStyle('display: none')
 
+  })
+
+  test.only('if likes button is clicked twice, the evnt handler is called twice', async () => {
+    const user = userEvent.setup()
+    const button = screen.getByText('like')
+
+    await user.click(button)
+    await user.click(button)
+    expect(updateLike.mock.calls).toHaveLength(2)
   })
 
 })
