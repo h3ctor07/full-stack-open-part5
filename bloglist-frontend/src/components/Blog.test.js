@@ -7,6 +7,7 @@ import Blog from './Blog'
 describe('<Blog />', () => {
   let container
   let updateLike
+
   beforeEach(() => {
     const blog = {
       'title': 'testTitle',
@@ -29,6 +30,7 @@ describe('<Blog />', () => {
     }
 
     updateLike = jest.fn()
+
 
     container = render(<Blog blog={blog} user={user} updateLike={updateLike} />).container
   })
